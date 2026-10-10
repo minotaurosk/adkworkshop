@@ -3,7 +3,17 @@
 Eserler `works\` klasörüne konur, **`yayinla.bat`** çift tıklanır: site yeniden üretilir ve GitHub'a gönderilir
 (1–2 dakika içinde https://adkworkshop.com güncellenir). Göndermeden bakmak için **`onizle.bat`**.
 
-## Eser ekleme
+## Seçim aracı (önerilen yol)
+
+**`secim.bat`** → tarayıcıda yerel sayfa (http://127.0.0.1:8771). Solda kaynak klasörler (`site.json` →
+`source_dir`, Google Drive'daki Workshop Studies), ortada fotoğraflar. Fotoğrafları sırayla seç (1 = kapak),
+kategori + başlık + yıl → **Tek eser yap** (ya da **Her biri ayrı eser**). Sağdaki listeden eseri açıp başlık,
+açıklama, sıra, kapak düzenlenir. **works'e aktar ve önizle** seçilenleri `works\`'e kopyalar, siteyi üretir ve
+önizlemeyi açar; beğenince **`yayinla.bat`**. Seçimler `secim.json`'da saklanır. Turuncu "referans?" işareti
+kamera/telefon adı taşımayan (internetten inmiş olabilecek) dosyalardır; kendi fotoğrafın değilse koyma.
+Aracın kopyaladıklarına bir sonraki aktarımda kendisi bakar; `works\`'e elle eklenenlere dokunmaz.
+
+## Eser ekleme (elle)
 
 ```
 works\
