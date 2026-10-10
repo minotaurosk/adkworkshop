@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://adkworkshop.com/sitemap.xml

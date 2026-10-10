@@ -1,0 +1,111 @@
+/* ADK Workshop — galeri sitesi */
+:root {
+  --bg: #0e0f12; --bg2: #15171b; --panel: #1b1e24; --line: #2a2e36; --text: #ebedf0; --muted: #9aa2b0;
+  --accent: #00c2a8; --accent-ink: #04201c; --shadow: rgba(0, 0, 0, .6);
+}
+@media (prefers-color-scheme: light) {
+  :root { --bg: #fbfbfa; --bg2: #f1f1ef; --panel: #ffffff; --line: #e2e2de; --text: #1c1d20; --muted: #62666e;
+          --accent: #00a38d; --accent-ink: #ffffff; --shadow: rgba(30, 30, 40, .18); }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 17px/1.6 "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+img { max-width: 100%; height: auto; display: block; }
+.wrap { max-width: 1280px; margin: 0 auto; padding: 0 16px; }
+.wrap.narrow { max-width: 760px; }
+.center { text-align: center; }
+h1, h2 { letter-spacing: -.015em; line-height: 1.15; }
+h2 { font-size: clamp(26px, 3.5vw, 34px); margin: 0 0 28px; }
+
+header.top { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--bg) 84%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+header.top .wrap { display: flex; align-items: center; gap: 20px; height: 60px; }
+.brand { color: var(--text); font-weight: 700; font-size: 18px; letter-spacing: .02em; }
+.brand:hover { text-decoration: none; }
+header.top nav { margin-left: auto; display: flex; gap: 22px; align-items: center; font-size: 15px; }
+header.top nav a { color: var(--muted); }
+header.top nav a:hover { color: var(--text); text-decoration: none; }
+.lang { border: 1px solid var(--line); border-radius: 6px; padding: 2px 8px; font-size: 13px; }
+@media (max-width: 560px) { header.top nav { gap: 14px; } header.top nav a[href*="#"] { display: none; } }
+
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 11px 20px; border-radius: 10px; font-weight: 600; border: 1px solid var(--line); color: var(--text); background: var(--panel); }
+.btn:hover { text-decoration: none; border-color: var(--muted); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+
+.hero { position: relative; overflow: hidden; padding: 120px 0 100px; text-align: center; border-bottom: 1px solid var(--line); }
+.hero-art { position: absolute; inset: -40px; background-size: cover; background-position: center; filter: blur(28px) saturate(1.1); opacity: .45; transform: scale(1.1); }
+.hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 40%, var(--bg)); }
+.hero .wrap { position: relative; z-index: 1; }
+.hero h1 { font-size: clamp(42px, 7vw, 76px); margin: 0 0 12px; }
+.hero .lead { font-size: clamp(18px, 2.4vw, 22px); color: var(--muted); margin: 0 auto; max-width: 640px; }
+
+section { padding: 72px 0; }
+section.alt { background: var(--bg2); }
+section.page { padding-top: 40px; }
+section.page h1 { font-size: clamp(30px, 4.5vw, 44px); margin: 0 0 18px; }
+#about p, .work header p { color: var(--muted); }
+.more { text-align: center; margin: 32px 0 0; }
+.empty { color: var(--muted); text-align: center; font-size: 18px; padding: 40px 0; }
+
+/* taşlı (masonry) ızgara */
+.masonry { columns: 3 300px; column-gap: 14px; }
+.tile { position: relative; display: block; margin: 0 0 14px; break-inside: avoid; border-radius: 10px; overflow: hidden; background: var(--panel); }
+.tile img { width: 100%; transition: transform .35s ease; }
+.tile:hover img { transform: scale(1.03); }
+.tile .cap { position: absolute; left: 0; right: 0; bottom: 0; padding: 30px 14px 12px; color: #fff; background: linear-gradient(to top, rgba(0, 0, 0, .75), transparent); opacity: 0; transition: opacity .2s; }
+.tile:hover .cap, .tile:focus .cap { opacity: 1; }
+.tile .cap b { display: block; font-size: 15px; }
+.tile .cap small { opacity: .8; font-size: 13px; }
+.tile .count { position: absolute; top: 10px; right: 10px; background: rgba(0, 0, 0, .6); color: #fff; font-size: 12px; padding: 2px 8px; border-radius: 99px; }
+.tile:hover { text-decoration: none; }
+@media (hover: none) { .tile .cap { opacity: 1; } }
+
+.cats { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+.catcard { position: relative; border-radius: 12px; overflow: hidden; aspect-ratio: 4 / 3; background: var(--panel); }
+.catcard img { width: 100%; height: 100%; object-fit: cover; transition: transform .35s; }
+.catcard:hover img { transform: scale(1.04); }
+.catcard span { position: absolute; inset: auto 0 0 0; padding: 40px 16px 14px; color: #fff; background: linear-gradient(to top, rgba(0, 0, 0, .8), transparent); }
+.catcard b { display: block; font-size: 19px; }
+.catcard small { opacity: .8; }
+.catcard:hover { text-decoration: none; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 26px; }
+.chip { border: 1px solid var(--line); border-radius: 99px; padding: 5px 14px; color: var(--text); font-size: 14px; }
+.chip small { color: var(--muted); margin-left: 4px; }
+.chip.on { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.chip.on small { color: inherit; opacity: .8; }
+.chip:hover { text-decoration: none; border-color: var(--muted); }
+
+.products { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+.product { display: flex; gap: 18px; align-items: flex-start; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 22px; color: var(--text); }
+.product:hover { text-decoration: none; border-color: var(--accent); }
+.product img { width: 64px; height: 64px; flex: none; }
+.product b { display: block; font-size: 19px; }
+.product small { display: block; color: var(--muted); font-size: 15px; margin: 4px 0 8px; }
+.product em { font-style: normal; color: var(--accent); font-weight: 600; font-size: 15px; }
+.social { display: flex; gap: 18px; justify-content: center; flex-wrap: wrap; }
+
+/* eser sayfası */
+.work { padding: 36px 0 72px; }
+.work header { max-width: 760px; margin: 0 auto 28px; text-align: center; }
+.work h1 { font-size: clamp(30px, 4.5vw, 46px); margin: 4px 0 12px; }
+.crumb { color: var(--muted); font-size: 14px; margin: 0; }
+.tags { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+.tag { font-size: 13px; color: var(--muted); border: 1px solid var(--line); border-radius: 99px; padding: 1px 10px; }
+.images { display: flex; flex-direction: column; align-items: center; gap: 18px; }
+.images .big { display: block; cursor: zoom-in; }
+.images img { max-height: 88vh; width: auto; border-radius: 8px; box-shadow: 0 20px 60px -20px var(--shadow); }
+.prevnext { display: flex; justify-content: space-between; gap: 16px; margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--line); font-size: 15px; }
+.prevnext a { color: var(--muted); max-width: 40%; }
+.prevnext a:hover { color: var(--text); }
+.prevnext .mid { margin: 0 auto; text-align: center; }
+
+footer { border-top: 1px solid var(--line); padding: 32px 0 44px; color: var(--muted); font-size: 14px; }
+footer .wrap { display: flex; flex-wrap: wrap; gap: 12px 28px; align-items: center; }
+footer .links { display: flex; flex-wrap: wrap; gap: 8px 20px; margin-left: auto; }
+footer a { color: var(--muted); }
+footer a:hover { color: var(--text); }
+
+.lightbox { position: fixed; inset: 0; z-index: 50; background: rgba(0, 0, 0, .92); display: none; align-items: center; justify-content: center; padding: 12px; cursor: zoom-out; }
+.lightbox.on { display: flex; }
+.lightbox img { max-width: 100%; max-height: 100%; object-fit: contain; }

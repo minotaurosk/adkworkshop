@@ -1,0 +1,31 @@
+{
+  "name": "ADK Workshop",
+  "url": "https://adkworkshop.com",
+  "works_dir": "works",
+  "tagline": {
+    "en": "Art, design and 3D printing from the workshop.",
+    "tr": "Atölyeden sanat, tasarım ve 3D baskı."
+  },
+  "about": {
+    "en": "ADK Workshop is where ideas turn into finished pieces: digital art, sculpting, painting and 3D printing.\n\nThis site collects the work made in the workshop over the years, together with the tools we build for makers.",
+    "tr": "ADK Workshop, fikirlerin bitmiş işlere dönüştüğü yer: dijital sanat, heykel, boyama ve 3D baskı.\n\nBu site, atölyede yıllar içinde yapılan işleri ve üreticiler için geliştirdiğimiz araçları bir araya getiriyor."
+  },
+  "email": "support@adkworkshop.com",
+  "links": [
+    {"name": "DeviantArt", "url": ""},
+    {"name": "Instagram", "url": ""},
+    {"name": "Printables", "url": ""}
+  ],
+  "featured_count": 9,
+  "products": [
+    {
+      "name": "3D Vault",
+      "url": "https://3dvault.adkworkshop.com/",
+      "icon": "3dvault.png",
+      "text": {
+        "en": "A fast, local library for your 3D print files: STL, OBJ, 3MF, G-code and models inside archives. For Windows.",
+        "tr": "3D baskı dosyaların için hızlı, yerel bir kütüphane: STL, OBJ, 3MF, G-code ve arşivlerin içindeki modeller. Windows için."
+      }
+    }
+  ]
+}
