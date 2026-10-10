@@ -3,18 +3,31 @@
   "url": "https://adkworkshop.com",
   "works_dir": "works",
   "tagline": {
-    "en": "Art, design and 3D printing from the workshop.",
-    "tr": "Atölyeden sanat, tasarım ve 3D baskı."
+    "en": "Wood, clay, resin, paper and pixels: handmade work from a self-taught maker.",
+    "tr": "Ahşap, kil, reçine, kâğıt ve piksel: kendi kendini yetiştirmiş bir üreticinin el işleri."
   },
   "about": {
-    "en": "ADK Workshop is where ideas turn into finished pieces: digital art, sculpting, painting and 3D printing.\n\nThis site collects the work made in the workshop over the years, together with the tools we build for makers.",
-    "tr": "ADK Workshop, fikirlerin bitmiş işlere dönüştüğü yer: dijital sanat, heykel, boyama ve 3D baskı.\n\nBu site, atölyede yıllar içinde yapılan işleri ve üreticiler için geliştirdiğimiz araçları bir araya getiriyor."
+    "en": "ADK Workshop is the studio of Koray Korkusuz, a self-taught maker who has been turning wood, clay, resin and paper into finished pieces for more than fifteen years. No formal training in painting or sculpture: just curiosity, scrap material and a lot of trial and error.\n\nIt started with pencil drawings, polymer clay dragons and painted miniatures in the late 2000s. From 2014 to 2017 it became Atölye Siga, a small artisan workshop in Sığacık, Seferihisar, where olive-wood spoons and bowls, jewelry, sculptures, signs, toys and furniture were made by hand, from the first sketch to the final coat.\n\nAlongside the workshop runs a twenty-year career in IT infrastructure, on projects in Qatar, Azerbaijan and Saudi Arabia. Today the two worlds meet: 3D design and printing, AI-assisted concept art, and tools for makers such as 3D Vault.",
+    "tr": "ADK Workshop, on beş yılı aşkın süredir ahşabı, kili, reçineyi ve kâğıdı bitmiş işlere dönüştüren, kendi kendini yetiştirmiş bir üretici olan Koray Korkusuz'un atölyesi. Resim ya da heykel eğitimi yok: sadece merak, atık malzeme ve bolca deneme yanılma.\n\nHer şey 2000'lerin sonunda karakalem çizimler, polimer kilden ejderhalar ve boyanmış minyatürlerle başladı. 2014–2017 arasında Seferihisar Sığacık'ta küçük bir zanaat atölyesi olan Atölye Siga'ya dönüştü: zeytin ağacından kaşıklar ve kâseler, takılar, heykeller, tabelalar, oyuncaklar ve mobilyalar ilk eskizden son kat cilaya kadar elde yapıldı.\n\nAtölyenin yanında Katar, Azerbaycan ve Suudi Arabistan'daki projelerde geçen yirmi yıllık bir bilgi teknolojileri kariyeri var. Bugün bu iki dünya buluşuyor: 3D tasarım ve baskı, yapay zekâ destekli konsept çalışmalar ve 3D Vault gibi üreticiler için araçlar."
   },
   "email": "support@adkworkshop.com",
   "links": [
-    {"name": "DeviantArt", "url": ""},
-    {"name": "Instagram", "url": ""},
-    {"name": "Printables", "url": ""}
+    {
+      "name": "DeviantArt",
+      "url": "https://www.deviantart.com/minotaurosk"
+    },
+    {
+      "name": "Instagram",
+      "url": ""
+    },
+    {
+      "name": "LinkedIn",
+      "url": "https://www.linkedin.com/in/koray-korkusuz"
+    },
+    {
+      "name": "Printables",
+      "url": ""
+    }
   ],
   "featured_count": 9,
   "products": [
