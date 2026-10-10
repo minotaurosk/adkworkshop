@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Eser seçimi · ADK Workshop</title>
+<style>
+:root { --bg:#121418; --panel:#1b1e24; --panel2:#23272f; --line:#2f3440; --text:#e8eaee; --muted:#8f97a5; --accent:#00c2a8; --warn:#ffb020; --ok:#3ccf6e; --danger:#ff5a5f; }
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--text); font:14px/1.45 "Segoe UI",system-ui,sans-serif; height:100vh; display:grid; grid-template-rows:auto 1fr; overflow:hidden; }
+button, select, input, textarea { font:inherit; color:inherit; background:var(--panel2); border:1px solid var(--line); border-radius:6px; padding:5px 9px; }
+button { cursor:pointer; } button:hover { border-color:var(--muted); }
+button.pri { background:var(--accent); border-color:var(--accent); color:#04201c; font-weight:600; }
+button.del { color:var(--danger); }
+input[type=checkbox] { width:auto; }
+header { display:flex; gap:10px; align-items:center; padding:8px 12px; background:var(--panel); border-bottom:1px solid var(--line); flex-wrap:wrap; }
+header h1 { font-size:16px; margin:0 12px 0 0; }
+header .sp { flex:1; }
+main { display:grid; grid-template-columns:280px 1fr 330px; min-height:0; }
+#tree, #works { overflow:auto; border-right:1px solid var(--line); padding:8px; }
+#works { border-right:0; border-left:1px solid var(--line); }
+#tree details { margin-left:10px; } #tree > details { margin-left:0; }
+#tree summary, #tree .leaf { cursor:pointer; padding:2px 4px; border-radius:4px; display:flex; gap:6px; align-items:baseline; list-style:none; }
+#tree summary::-webkit-details-marker { display:none; }
+#tree summary::before { content:"▸"; color:var(--muted); width:10px; } #tree details[open] > summary::before { content:"▾"; }
+#tree .leaf::before { content:""; width:10px; }
+#tree .on { background:var(--panel2); color:var(--accent); }
+#tree small { color:var(--muted); margin-left:auto; white-space:nowrap; }
+#tree small b { color:var(--ok); font-weight:600; }
+#center { display:grid; grid-template-rows:auto 1fr; min-height:0; }
+#bar { display:flex; flex-wrap:wrap; gap:8px; align-items:center; padding:8px 12px; border-bottom:1px solid var(--line); background:var(--panel); }
+#bar input.t { width:170px; } #bar input.y { width:64px; }
+#bar .cnt { font-weight:600; min-width:70px; }
+#path { color:var(--muted); font-size:13px; width:100%; }
+#grid { overflow:auto; padding:12px; display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:10px; align-content:start; }
+.tile { position:relative; background:var(--panel); border:2px solid transparent; border-radius:8px; overflow:hidden; cursor:pointer; user-select:none; }
+.tile img { width:100%; aspect-ratio:1; object-fit:cover; display:block; background:#0c0d10; }
+.tile .nm { font-size:11px; color:var(--muted); padding:3px 6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.tile.sel { border-color:var(--accent); }
+.tile .ord { position:absolute; top:6px; left:6px; background:var(--accent); color:#04201c; font-weight:700; border-radius:99px; min-width:22px; height:22px; text-align:center; line-height:22px; font-size:12px; display:none; }
+.tile.sel .ord { display:block; }
+.tile .bd { position:absolute; top:6px; right:6px; display:flex; gap:4px; }
+.bd span { font-size:11px; border-radius:4px; padding:1px 5px; font-weight:600; }
+.bd .ref { background:var(--warn); color:#2a1d00; } .bd .used { background:var(--ok); color:#06210f; }
+.hide-ref .tile.isref { display:none; }
+.tile.isref img { opacity:.55; }
+#works h3 { font-size:13px; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin:14px 4px 6px; display:flex; justify-content:space-between; }
+.w { display:flex; gap:8px; align-items:center; padding:5px; border-radius:6px; cursor:pointer; }
+.w:hover { background:var(--panel2); }
+.w img { width:44px; height:44px; object-fit:cover; border-radius:4px; flex:none; }
+.w b { display:block; font-weight:600; font-size:13px; } .w small { color:var(--muted); font-size:12px; }
+.empty { color:var(--muted); padding:30px; text-align:center; }
+dialog { background:var(--panel); color:var(--text); border:1px solid var(--line); border-radius:10px; width:min(820px,94vw); padding:18px; }
+dialog::backdrop { background:rgba(0,0,0,.6); }
+dialog h2 { margin:0 0 12px; font-size:18px; }
+.form { display:grid; grid-template-columns:110px 1fr 110px 1fr; gap:8px 10px; align-items:center; }
+.form label { color:var(--muted); font-size:13px; } .form .full { grid-column:2 / -1; }
+.form textarea { min-height:60px; resize:vertical; width:100%; } .form input, .form select { width:100%; }
+.strip { display:flex; gap:8px; overflow-x:auto; padding:10px 0; }
+.strip .it { flex:none; width:120px; text-align:center; font-size:12px; }
+.strip img { width:120px; height:120px; object-fit:cover; border-radius:6px; display:block; margin-bottom:4px; }
+.strip .it:first-child img { outline:2px solid var(--accent); }
+.strip button { padding:1px 6px; font-size:12px; }
+.row { display:flex; gap:8px; justify-content:flex-end; margin-top:12px; flex-wrap:wrap; }
+.row .l { margin-right:auto; }
+#lb { position:fixed; inset:0; background:rgba(0,0,0,.9); display:none; align-items:center; justify-content:center; z-index:9; cursor:zoom-out; }
+#lb.on { display:flex; } #lb img { max-width:96vw; max-height:94vh; }
+.cats td { padding:3px; } .cats input { width:100%; }
+#msg { position:fixed; bottom:14px; left:50%; transform:translateX(-50%); background:var(--panel2); border:1px solid var(--line); padding:8px 14px; border-radius:8px; display:none; white-space:pre-wrap; max-width:80vw; z-index:10; }
+.hint { color:var(--muted); font-size:12px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>ADK Workshop · Eser seçimi</h1>
+  <span class="hint">Tıkla: seç · Shift+tık: aralık · Çift tık: büyük gör · Sıra = eserdeki sıra (1 = kapak)</span>
+  <span class="sp"></span>
+  <label><input type="checkbox" id="hideRef"> Referans olabilecekleri gizle</label>
+  <button id="btnCats">Kategoriler</button>
+  <button id="btnRefresh" title="Drive'daki klasör listesini yeniden oku">↻ Klasörler</button>
+  <button class="pri" id="btnExport">works'e aktar ve önizle</button>
+</header>
+<main>
+  <nav id="tree"><div class="empty">Klasörler okunuyor…</div></nav>
+  <section id="center">
+    <div id="bar">
+      <div id="path">Soldan bir klasör seç.</div>
+      <span class="cnt" id="cnt">0 seçili</span>
+      <select id="cat"></select>
+      <input class="t" id="tEn" placeholder="Başlık (EN)">
+      <input class="t" id="tTr" placeholder="Başlık (TR)">
+      <input class="y" id="year" placeholder="Yıl">
+      <label><input type="checkbox" id="feat"> Öne çıkan</label>
+      <button class="pri" id="mkOne">Tek eser yap</button>
+      <button id="mkEach">Her biri ayrı eser</button>
+      <button id="selAll">Tümü</button>
+      <button id="selNone">Temizle</button>
+    </div>
+    <div id="grid"></div>
+  </section>
+  <aside id="works"></aside>
+</main>
+
+<dialog id="dlgWork">
+  <h2>Eser</h2>
+  <div class="form">
+    <label>Başlık (EN)</label><input id="eTitle">
+    <label>Başlık (TR)</label><input id="eTitleTr">
+    <label>Kategori</label><select id="eCat"></select>
+    <label>Yıl</label><input id="eYear">
+    <label>Etiketler</label><input id="eTags" placeholder="virgülle">
+    <label>Öne çıkan</label><span><input type="checkbox" id="eFeat"></span>
+    <label>Açıklama (EN)</label><textarea class="full" id="eDesc"></textarea>
+    <label>Açıklama (TR)</label><textarea class="full" id="eDescTr"></textarea>
+  </div>
+  <div class="strip" id="eImgs"></div>
+  <div class="row">
+    <button class="del l" id="eDel">Eseri sil</button>
+    <button id="eAdd">Seçili resimleri ekle</button>
+    <button id="eGo">Klasörüne git</button>
+    <button class="pri" id="eClose">Tamam</button>
+  </div>
+</dialog>
+
+<dialog id="dlgCats">
+  <h2>Kategoriler</h2>
+  <p class="hint">Sıra sitedeki sırayı belirler. Kimlik (id) klasör ve adres adıdır; eser varken değiştirme.</p>
+  <table class="cats" id="catTable"></table>
+  <div class="row"><button class="l" id="catAdd">+ Kategori ekle</button><button class="pri" id="catClose">Tamam</button></div>
+</dialog>
+
+<div id="lb"><img alt=""></div>
+<div id="msg"></div>
+
+<script>
+"use strict";
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+const enc = encodeURIComponent;
+let S = { categories: [], works: [] };      // secim.json
+let TREE = [], cur = null, files = [], sel = [], last = -1, editing = null;
+
+async function api(path, body) {
+  const r = await fetch(path, body === undefined ? {} : { method: "POST", headers: { "Content-Type": "application/json", "X-Secim": "1" }, body: JSON.stringify(body) });
+  const j = await r.json();
+  if (!r.ok) throw new Error(j.error || r.status);
+  return j;
+}
+function msg(t, ms = 3000) { const m = $("#msg"); m.textContent = t; m.style.display = "block"; clearTimeout(msg.t); if (ms) msg.t = setTimeout(() => (m.style.display = "none"), ms); }
+let saveT;
+function save() { clearTimeout(saveT); saveT = setTimeout(() => api("/api/state", S).catch((e) => msg("Kaydedilemedi: " + e.message)), 300); }
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+
+// kullanılan resimler → eser
+function usedMap() { const m = new Map(); for (const w of S.works) for (const p of w.images) m.set(p, w); return m; }
+
+// ad / yıl tahmini
+function cleanName(s) {
+  s = s.replace(/\.[^.]+$/, "").replace(/^(IMG|DSC|DSCN|VID|PXL|MVIMG)[-_]?/i, "")
+       .replace(/^(19|20)\d{2}([-_. ]?\d{2}){0,2}([-_ ]\d{4,6})?/, "").replace(/^[-_ .]+|[-_ .]+$/g, "")
+       .replace(/WA\d+$/i, "").replace(/[-_]+/g, " ").replace(/\s*\(\d+\)$/, "").replace(/\s+-\s*\d+$/, "").trim();
+  return /^\d*$/.test(s) ? "" : s;
+}
+function guessYear(...names) {
+  for (const n of names) { const m = String(n).match(/(?:^|[^\d])((?:19|20)\d{2})(?:[-_. ]?[01]\d)/) || String(n).match(/^((?:19|20)\d{2})/); if (m) return m[1]; }
+  return "";
+}
+const cap = (s) => s.replace(/(^|\s)(\p{Ll})/gu, (a, b, c) => b + c.toLocaleUpperCase("tr"));
+
+// ---------------------------------------------------------------- ağaç
+function renderTree() {
+  const used = usedMap(), cnt = {};
+  for (const p of used.keys()) { const parts = p.split("/"); for (let i = 1; i < parts.length; i++) { const k = parts.slice(0, i).join("/"); cnt[k] = (cnt[k] || 0) + 1; } }
+  const node = (t, depth = 0) => {
+    const lab = `<span>${esc(t.name)}</span><small>${cnt[t.path] ? `<b>${cnt[t.path]}</b> / ` : ""}${t.total}</small>`;
+    const on = cur === t.path ? " on" : "";
+    if (!t.kids.length) return `<div class="leaf${on}" data-p="${esc(t.path)}">${lab}</div>`;
+    const open = depth === 0 || (cur && (cur + "/").startsWith(t.path + "/")) ? " open" : "";
+    return `<details${open}><summary class="${on.trim()}" data-p="${esc(t.path)}">${lab}</summary>${t.n ? `<div class="leaf${on}" data-p="${esc(t.path)}"><span>(bu klasördekiler)</span><small>${t.n}</small></div>` : ""}${t.kids.map((k) => node(k, depth + 1)).join("")}</details>`;
+  };
+  $("#tree").innerHTML = TREE.length ? TREE.map(node).join("") : `<div class="empty">Kaynak klasör bulunamadı (site.json → source_dir).</div>`;
+}
+$("#tree").addEventListener("click", (e) => {
+  const el = e.target.closest("[data-p]"); if (!el) return;
+  if (el.tagName === "SUMMARY") { const d = el.parentElement; if (!d.open) openFolder(el.dataset.p); return; }
+  openFolder(el.dataset.p);
+});
+
+// ---------------------------------------------------------------- klasör
+async function openFolder(p) {
+  cur = p; sel = []; last = -1;
+  $("#path").textContent = p.replace(/\//g, "  ›  ");
+  $("#grid").innerHTML = `<div class="empty">Yükleniyor…</div>`;
+  renderTree();
+  try { files = await api("/api/folder?p=" + enc(p)); } catch (e) { files = []; msg(e.message); }
+  renderGrid(); fillDefaults();
+}
+function renderGrid() {
+  const used = usedMap();
+  if (!files.length) { $("#grid").innerHTML = `<div class="empty">Bu klasörde resim yok; alt klasörlere bak.</div>`; return; }
+  $("#grid").innerHTML = files.map((f, i) => {
+    const w = used.get(f.path), o = sel.indexOf(f.path);
+    return `<div class="tile${o >= 0 ? " sel" : ""}${f.ref ? " isref" : ""}" data-i="${i}" title="${esc(f.name)}${w ? "\nEser: " + esc(w.title) : ""}">
+      <img loading="lazy" src="/thumb?p=${enc(f.path)}" alt=""><span class="ord">${o + 1}</span>
+      <span class="bd">${f.ref ? `<span class="ref">referans?</span>` : ""}${w ? `<span class="used">✓</span>` : ""}</span>
+      <div class="nm">${esc(f.name)}</div></div>`;
+  }).join("");
+  updCount();
+}
+function updCount() {
+  $("#cnt").textContent = sel.length + " seçili";
+  document.querySelectorAll("#grid .tile").forEach((t) => {
+    const o = sel.indexOf(files[+t.dataset.i].path);
+    t.classList.toggle("sel", o >= 0); t.querySelector(".ord").textContent = o + 1;
+  });
+}
+$("#grid").addEventListener("click", (e) => {
+  const t = e.target.closest(".tile"); if (!t) return;
+  const i = +t.dataset.i, p = files[i].path;
+  if (e.shiftKey && last >= 0) {
+    const [a, b] = [Math.min(last, i), Math.max(last, i)];
+    for (let k = a; k <= b; k++) if (!sel.includes(files[k].path) && !(files[k].ref && $("#hideRef").checked)) sel.push(files[k].path);
+  } else {
+    const o = sel.indexOf(p); o >= 0 ? sel.splice(o, 1) : sel.push(p);
+  }
+  last = i; updCount();
+  if (sel.length === 1) fillDefaults();
+});
+$("#grid").addEventListener("dblclick", (e) => {
+  const t = e.target.closest(".tile"); if (!t) return;
+  $("#lb img").src = "/big?p=" + enc(files[+t.dataset.i].path); $("#lb").classList.add("on");
+});
+$("#lb").addEventListener("click", () => $("#lb").classList.remove("on"));
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") $("#lb").classList.remove("on"); });
+$("#hideRef").addEventListener("change", (e) => document.body.classList.toggle("hide-ref", e.target.checked));
+$("#selAll").onclick = () => { sel = files.filter((f) => !(f.ref && $("#hideRef").checked)).map((f) => f.path); updCount(); };
+$("#selNone").onclick = () => { sel = []; updCount(); };
+
+function fillDefaults() {
+  if (!cur) return;
+  const folderName = cur.split("/").pop();
+  const first = sel[0] ? sel[0].split("/").pop() : "";
+  const nm = cleanName(folderName) || cleanName(first);
+  $("#tEn").value = cap(nm); $("#tTr").value = "";
+  $("#year").value = guessYear(folderName, first, ...(files[0] ? [files[0].name] : []));
+}
+
+// ---------------------------------------------------------------- eser yapma
+function catOptions(selId) { return S.categories.map((c) => `<option value="${esc(c.id)}"${c.id === selId ? " selected" : ""}>${esc(c.tr)} · ${esc(c.en)}</option>`).join(""); }
+function renderCatSelects() { const v = $("#cat").value; $("#cat").innerHTML = catOptions(v || (S.categories[0] || {}).id); }
+function newWork(images, title, year) {
+  return { id: uid(), cat: $("#cat").value, title: title || "Untitled", title_tr: $("#tTr").value.trim(), year: year || "",
+           featured: $("#feat").checked, tags: "", desc: "", desc_tr: "", images };
+}
+function detach(paths) {  // bir resim tek eserde olur
+  for (const w of S.works) w.images = w.images.filter((p) => !paths.includes(p));
+  S.works = S.works.filter((w) => w.images.length);
+}
+$("#mkOne").onclick = () => {
+  if (!sel.length) return msg("Önce resim seç.");
+  if (!$("#cat").value) return msg("Kategori seç.");
+  detach(sel);
+  S.works.push(newWork([...sel], $("#tEn").value.trim(), $("#year").value.trim()));
+  msg(`Eser eklendi: ${$("#tEn").value || "Untitled"} (${sel.length} resim)`);
+  sel = []; $("#feat").checked = false; afterChange();
+};
+$("#mkEach").onclick = () => {
+  if (!sel.length) return msg("Önce resim seç.");
+  detach(sel);
+  const base = $("#tEn").value.trim();
+  sel.forEach((p, i) => {
+    const fn = p.split("/").pop();
+    const t = cap(cleanName(fn)) || (base ? `${base} ${i + 1}` : "Untitled");
+    S.works.push(newWork([p], t, guessYear(fn) || $("#year").value.trim()));
+  });
+  msg(`${sel.length} eser eklendi`); sel = []; afterChange();
+};
+function afterChange() { save(); renderGrid(); renderTree(); renderWorks(); }
+
+// ---------------------------------------------------------------- eser listesi
+function renderWorks() {
+  if (!S.works.length) { $("#works").innerHTML = `<div class="empty">Henüz eser yok.<br>Ortadan resim seçip "Tek eser yap".</div>`; return; }
+  let html = `<div class="hint" style="padding:4px">${S.works.length} eser · ${S.works.reduce((a, w) => a + w.images.length, 0)} resim</div>`;
+  for (const c of S.categories) {
+    const ws = S.works.filter((w) => w.cat === c.id);
+    if (!ws.length) continue;
+    html += `<h3><span>${esc(c.tr)}</span><span>${ws.length}</span></h3>` + ws.map((w) =>
+      `<div class="w" data-id="${w.id}"><img loading="lazy" src="/thumb?p=${enc(w.images[0])}" alt=""><span><b>${w.featured ? "★ " : ""}${esc(w.title)}</b><small>${esc(w.year || "")} · ${w.images.length} resim</small></span></div>`).join("");
+  }
+  const orphan = S.works.filter((w) => !S.categories.some((c) => c.id === w.cat));
+  if (orphan.length) html += `<h3>Kategorisiz</h3>` + orphan.map((w) => `<div class="w" data-id="${w.id}"><span><b>${esc(w.title)}</b></span></div>`).join("");
+  $("#works").innerHTML = html;
+}
+$("#works").addEventListener("click", (e) => { const el = e.target.closest(".w"); if (el) editWork(el.dataset.id); });
+
+function editWork(id) {
+  editing = S.works.find((w) => w.id === id); if (!editing) return;
+  const w = editing;
+  $("#eTitle").value = w.title; $("#eTitleTr").value = w.title_tr || ""; $("#eCat").innerHTML = catOptions(w.cat);
+  $("#eYear").value = w.year || ""; $("#eTags").value = w.tags || ""; $("#eFeat").checked = !!w.featured;
+  $("#eDesc").value = w.desc || ""; $("#eDescTr").value = w.desc_tr || "";
+  renderStrip(); $("#dlgWork").showModal();
+}
+function renderStrip() {
+  const w = editing;
+  $("#eImgs").innerHTML = w.images.map((p, i) => `<div class="it"><img src="/thumb?p=${enc(p)}" alt="" data-big="${esc(p)}">
+    <button data-a="first" data-i="${i}" title="Kapak yap">★</button> <button data-a="left" data-i="${i}">◀</button> <button data-a="right" data-i="${i}">▶</button> <button data-a="rm" data-i="${i}" class="del">✕</button></div>`).join("");
+}
+$("#eImgs").addEventListener("click", (e) => {
+  const b = e.target.closest("button"), im = e.target.closest("img");
+  if (im) { $("#lb img").src = "/big?p=" + enc(im.dataset.big); $("#lb").classList.add("on"); return; }
+  if (!b) return;
+  const a = editing.images, i = +b.dataset.i;
+  if (b.dataset.a === "first") a.unshift(...a.splice(i, 1));
+  if (b.dataset.a === "left" && i > 0) [a[i - 1], a[i]] = [a[i], a[i - 1]];
+  if (b.dataset.a === "right" && i < a.length - 1) [a[i + 1], a[i]] = [a[i], a[i + 1]];
+  if (b.dataset.a === "rm") a.splice(i, 1);
+  renderStrip();
+});
+function closeEdit() {
+  const w = editing; if (!w) return;
+  Object.assign(w, { title: $("#eTitle").value.trim() || "Untitled", title_tr: $("#eTitleTr").value.trim(), cat: $("#eCat").value,
+    year: $("#eYear").value.trim(), tags: $("#eTags").value.trim(), featured: $("#eFeat").checked,
+    desc: $("#eDesc").value.trim(), desc_tr: $("#eDescTr").value.trim() });
+  if (!w.images.length) S.works = S.works.filter((x) => x !== w);
+  editing = null; $("#dlgWork").close(); afterChange();
+}
+$("#eClose").onclick = closeEdit;
+$("#dlgWork").addEventListener("cancel", (e) => { e.preventDefault(); closeEdit(); });
+$("#eDel").onclick = () => { if (!confirm("Eser silinsin mi? (Drive'daki fotoğraflara dokunulmaz)")) return; S.works = S.works.filter((x) => x !== editing); editing = null; $("#dlgWork").close(); afterChange(); };
+$("#eAdd").onclick = () => { if (!sel.length) return msg("Ortada seçili resim yok."); const add = sel.filter((p) => !editing.images.includes(p)); const keep = editing; detach(add); keep.images.push(...add); if (!S.works.includes(keep)) S.works.push(keep); sel = []; renderStrip(); };
+$("#eGo").onclick = () => { const p = editing.images[0]; closeEdit(); if (p) openFolder(p.slice(0, p.lastIndexOf("/"))); };
+
+// ---------------------------------------------------------------- kategoriler
+function renderCats() {
+  $("#catTable").innerHTML = `<tr><td class="hint">id</td><td class="hint">English</td><td class="hint">Türkçe</td><td></td></tr>` + S.categories.map((c, i) => {
+    const n = S.works.filter((w) => w.cat === c.id).length;
+    return `<tr data-i="${i}"><td><input data-k="id" value="${esc(c.id)}" ${n ? "readonly" : ""}></td><td><input data-k="en" value="${esc(c.en)}"></td><td><input data-k="tr" value="${esc(c.tr)}"></td>
+      <td><button data-a="up">▲</button><button data-a="dn">▼</button><button data-a="rm" class="del" ${n ? `disabled title="${n} eser var"` : ""}>✕</button> <span class="hint">${n}</span></td></tr>`;
+  }).join("");
+}
+$("#catTable").addEventListener("input", (e) => {
+  const tr = e.target.closest("tr"), k = e.target.dataset.k; if (!tr || !k) return;
+  const c = S.categories[+tr.dataset.i];
+  c[k] = k === "id" ? e.target.value.toLowerCase().replace(/[^a-z0-9-]+/g, "-") : e.target.value;
+});
+$("#catTable").addEventListener("click", (e) => {
+  const b = e.target.closest("button"); if (!b) return;
+  const i = +b.closest("tr").dataset.i, a = S.categories;
+  if (b.dataset.a === "up" && i > 0) [a[i - 1], a[i]] = [a[i], a[i - 1]];
+  if (b.dataset.a === "dn" && i < a.length - 1) [a[i + 1], a[i]] = [a[i], a[i + 1]];
+  if (b.dataset.a === "rm") a.splice(i, 1);
+  renderCats();
+});
+$("#btnCats").onclick = () => { renderCats(); $("#dlgCats").showModal(); };
+$("#catAdd").onclick = () => { S.categories.push({ id: "yeni-" + (S.categories.length + 1), en: "New category", tr: "Yeni kategori" }); renderCats(); };
+$("#catClose").onclick = () => { $("#dlgCats").close(); afterChange(); renderCatSelects(); };
+
+// ---------------------------------------------------------------- aktarma
+$("#btnExport").onclick = async () => {
+  clearTimeout(saveT); await api("/api/state", S);
+  msg("Aktarılıyor… (Drive'dan kopyalama ve site üretimi biraz sürebilir)", 0);
+  try {
+    const r = await api("/api/export", {});
+    msg(`${r.works} eser · ${r.copied} dosya kopyalandı · ${r.removed} silindi\n${r.ok ? "Site üretildi." : "SİTE ÜRETİLEMEDİ"}\n${r.build}`, 9000);
+    if (r.ok) window.open("/site/", "adkw-preview");
+  } catch (e) { msg("Hata: " + e.message, 8000); }
+};
+$("#btnRefresh").onclick = async () => { TREE = await api("/api/tree?fresh=1"); renderTree(); };
+
+(async function init() {
+  S = await api("/api/state");
+  renderCatSelects(); renderWorks();
+  TREE = await api("/api/tree"); renderTree();
+})();
+</script>
+</body>
+</html>
