@@ -176,22 +176,64 @@ def scan(works_dir):
     return cats, works
 
 
-def make_images(works, out):
-    """Her resim için 640/1600 px WebP; kaynak değişmediyse dokunma. Kullanılmayanları sil."""
+def watermark(im, wm):
+    """Sağ alt köşeye yarı saydam yazı (ör. ADKW); boyut resmin kısa kenarına göre."""
+    text = (wm or {}).get("text")
+    if not text:
+        return im
+    from PIL import ImageDraw, ImageFont
+    base = im.convert("RGBA")
+    px = max(12, int(min(base.size) * float(wm.get("size", 0.05))))
+    font = None
+    for name in ("segoeuib.ttf", "arialbd.ttf", "DejaVuSans-Bold.ttf"):
+        try:
+            font = ImageFont.truetype(name, px)
+            break
+        except OSError:
+            continue
+    font = font or ImageFont.load_default()
+    layer = Image.new("RGBA", base.size, (0, 0, 0, 0))
+    d = ImageDraw.Draw(layer)
+    l, t, r, b = d.textbbox((0, 0), text, font=font)
+    m = int(px * 0.6)
+    pos = wm.get("position", "bottom-right")
+    x = m if "left" in pos else (base.width - (r - l)) // 2 if pos == "center" else base.width - (r - l) - m
+    y = m if "top" in pos else (base.height - (b - t)) // 2 if pos == "center" else base.height - (b - t) - m
+    a = int(255 * float(wm.get("opacity", 0.45)))
+    sh = max(1, px // 18)
+    d.text((x - l + sh, y - t + sh), text, font=font, fill=(0, 0, 0, a // 2))
+    d.text((x - l, y - t), text, font=font, fill=(255, 255, 255, a))
+    out = Image.alpha_composite(base, layer)
+    return out if im.mode == "RGBA" else out.convert("RGB")
+
+
+def make_images(works, out, wm=None):
+    """Her resim için 640/1600 px WebP (+ filigran). Kaynak ya da filigran değişmediyse yeniden üretmez
+    (img/.manifest.json: çıktı → kaynak imzası). Kullanılmayanları siler."""
     img_root = os.path.join(out, "img")
-    keep = set()
+    man_path = os.path.join(img_root, ".manifest.json")
+    try:
+        with open(man_path, encoding="utf-8") as f:
+            manifest = json.load(f)
+    except (OSError, ValueError):
+        manifest = {}
+    wm_sig = json.dumps(wm or {}, sort_keys=True)
+    new_man = {}
+    keep = {os.path.normpath(man_path)}
     made = 0
     for w in works:
         w.pics = []
         for i, src in enumerate(w.images, 1):
-            st = os.path.getmtime(src)
+            st = os.stat(src)
             files = {}
             for size in SIZES:
                 rel = f"img/{w.slug}/{i}-{size}.webp"
                 dst = os.path.join(out, rel)
                 keep.add(os.path.normpath(dst))
                 files[size] = rel
-                if os.path.isfile(dst) and os.path.getmtime(dst) >= st:
+                sig = f"{os.path.abspath(src)}|{st.st_size}|{int(st.st_mtime)}|{wm_sig}"
+                new_man[rel] = sig
+                if os.path.isfile(dst) and manifest.get(rel) == sig:
                     continue
                 os.makedirs(os.path.dirname(dst), exist_ok=True)
                 with Image.open(src) as im:
@@ -201,10 +243,14 @@ def make_images(works, out):
                     im = im.convert("RGBA" if alpha else "RGB")
                     if max(im.size) > size:
                         im.thumbnail((size, size), Image.LANCZOS)
+                    im = watermark(im, wm)
                     im.save(dst, "WEBP", quality=84 if size > 1000 else 80, method=5)  # EXIF yazılmaz
                 made += 1
             with Image.open(os.path.join(out, files[SIZES[-1]])) as im:
                 w.pics.append({"s": files[SIZES[0]], "l": files[SIZES[-1]], "w": im.width, "h": im.height})
+    os.makedirs(img_root, exist_ok=True)
+    with open(man_path, "w", encoding="utf-8") as f:
+        json.dump(new_man, f, ensure_ascii=False, indent=0, sort_keys=True)
     removed = 0
     if os.path.isdir(img_root):
         for dp, dn, fn in os.walk(img_root, topdown=False):
@@ -443,7 +489,7 @@ def main():
     os.makedirs(works_dir, exist_ok=True)
     cats, works = scan(works_dir)
     os.makedirs(a.out, exist_ok=True)
-    made, removed = make_images(works, a.out)
+    made, removed = make_images(works, a.out, cfg.get("watermark"))
     n = write_site(cfg, cats, works, a.out)
     mb = folder_size(a.out) / 1e6
     print(f"{len(works)} eser, {len(cats)} kategori · {made} resim üretildi, {removed} eski resim silindi · {n} sayfa · {mb:.0f} MB")
